@@ -9,7 +9,7 @@ class GeoIP
 
     public function __construct()
     {
-        $this->reader = new Reader(base_url() . '/public/uploads/maxmind-db/GeoLite2-City.mmdb');
+        $this->reader = new Reader(APPPATH . '/Database/GeoLite2-City.mmdb');
     }
 
     // Get Location
