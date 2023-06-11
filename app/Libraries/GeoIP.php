@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Libraries;
+
+require_once APPPATH . "ThirdParty/geoip2/vendor/autoload.php";
+
 use GeoIp2\Database\Reader;
 
 class GeoIP
@@ -9,7 +12,7 @@ class GeoIP
 
     public function __construct()
     {
-        $this->reader = new Reader(APPPATH . '/Database/GeoLite2-City.mmdb');
+        $this->reader = new Reader(FCPATH . 'uploads/maxmind-db/GeoLite2-City.mmdb');
     }
 
     // Get Location
@@ -32,21 +35,21 @@ class GeoIP
     }
 
     // Get Country
-    public function getCountry($ip, $lang = 'es')
+    public function getCountry($ipAddress)
     {
         try {
-            $record = $this->reader->city($ip);
-            return $record->country->names[$lang];
+            $record = $this->reader->city($ipAddress);
+            return $record->country->name;
         } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
             return null;
         }
     }
 
     // Get Country ISO Code
-    public function getCountryIsoCode($ip)
+    public function getCountryIsoCode($ipAddress)
     {
         try {
-            $record = $this->reader->city($ip);
+            $record = $this->reader->city($ipAddress);
             return $record->country->isoCode;
         } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
             return null;
@@ -54,22 +57,55 @@ class GeoIP
     }
 
     // Get City
-    public function getCity($ip, $lang = 'es')
+    public function getCity($ipAddress)
     {
         try {
-            $record = $this->reader->city($ip);
-            return $record->city->names[$lang];
+            $record = $this->reader->city($ipAddress);
+            return $record->city->name;
         } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
             return null;
         }
     }
 
     // Get State
-    public function getState($ip)
+    public function getState($ipAddress)
     {
         try {
-            $record = $this->reader->city($ip);
+            $record = $this->reader->city($ipAddress);
             return $record->mostSpecificSubdivision->name;
+        } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
+            return null;
+        }
+    }
+
+    // Get Postal Code
+    public function getPostalCode($ipAddress)
+    {
+        try {
+            $record = $this->reader->city($ipAddress);
+            return $record->postal->code;
+        } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
+            return null;
+        }
+    }
+
+    // Get Latitude
+    public function getLatitude ($ipAddress)
+    {
+        try {
+            $record = $this->reader->city($ipAddress);
+            return $record->location->latitude;
+        } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
+            return null;
+        }
+    }
+
+    // Get Longitude
+    public function getLongitude ($ipAddress)
+    {
+        try {
+            $record = $this->reader->city($ipAddress);
+            return $record->location->longitude;
         } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
             return null;
         }
